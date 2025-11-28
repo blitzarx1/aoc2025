@@ -40,7 +40,7 @@ static int read_line_reuse(FILE *f, char **buf, size_t *cap, size_t *len) {
 
     if (*buf == NULL || *cap == 0) {
         *cap = 128;
-        *buf = (char*)malloc(*cap);
+        *buf = (char *)malloc(*cap);
         if (!*buf) return -1;
     }
 
@@ -48,7 +48,7 @@ static int read_line_reuse(FILE *f, char **buf, size_t *cap, size_t *len) {
     while ((ch = fgetc(f)) != EOF) {
         if (n + 1 >= *cap) {
             size_t newcap = (*cap < 16384) ? (*cap * 2) : (*cap + *cap / 2);
-            char *nb = (char*)realloc(*buf, newcap);
+            char *nb = (char *)realloc(*buf, newcap);
             if (!nb) return -1;
             *buf = nb;
             *cap = newcap;

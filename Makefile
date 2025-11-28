@@ -1,6 +1,6 @@
 BIN_PATH=./bin
 
-CFLAGS= -Wall -Wextra -O2 -I./lib
+CFLAGS= -Wall -Wextra -I./lib
 
 LOG_LEVEL ?= 3
 

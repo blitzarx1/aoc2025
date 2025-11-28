@@ -14,20 +14,21 @@
 #define ARR_CAP_MULT 2
 
 typedef struct {
-    void   *vals;
+    void *vals;
     size_t  valsize;
     size_t  len;
     size_t  cap;
 } Array;
 
-Array  *arrnew(size_t valsize, size_t cap);
-int    arrappend(Array *arr, const void *val);
+Array *arrnew(size_t valsize, size_t cap);
+int arrappend(Array *arr, const void *val);
 size_t arrlen(const Array *arr);
-void  *arrget(const Array *arr, size_t idx);
-void   arrfree(Array *arr);
+void *arrget(const Array *arr, size_t idx);
+void arrfree(Array *arr);
 
-// helper macros for typed access
+// Helper macro for typed access returning pointer to value
 #define ARR_GET(type, arr, idx)     ((type *)(arrget((arr), (idx))))
+// Helper macro for typed access returning value
 #define ARR_GET_VAL(type, arr, idx) (*(type *)(arrget((arr), (idx))))
 
 #ifdef ARRAY_IMPLEMENTATION
@@ -43,7 +44,7 @@ static int arralloc(Array *arr, size_t cap) {
     }
 
     arr->vals = vals;
-    arr->cap  = cap;
+    arr->cap = cap;
     return 0;
 }
 
@@ -70,7 +71,7 @@ Array *arrnew(size_t valsize, size_t cap) {
 int arrappend(Array *arr, const void *val) {
     if (!arr || !val || arr->valsize == 0) {
         LOG_ERROR("invalid args (arr=%p val=%p valsize=%zu)",
-                 (void*)arr, val, arr ? arr->valsize : 0);
+            (void *)arr, val, arr ? arr->valsize : 0);
         return -1;
     }
 
@@ -92,7 +93,7 @@ int arrappend(Array *arr, const void *val) {
         }
 
         arr->vals = new_vals;
-        arr->cap  = new_cap;
+        arr->cap = new_cap;
     }
 
     unsigned char *base = (unsigned char *)arr->vals;
@@ -119,7 +120,7 @@ void *arrget(const Array *arr, size_t idx) {
     unsigned char *addr =
         (unsigned char *)arr->vals + idx * arr->valsize;
 
-    LOG_DEBUG("got element addres with idx=%zu: %p", idx, (void*)addr);
+    LOG_DEBUG("got element addres with idx=%zu: %p", idx, (void *)addr);
 
     return addr;
 }

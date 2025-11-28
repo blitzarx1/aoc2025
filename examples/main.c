@@ -20,17 +20,17 @@ int check_arr() {
     Array *arr = arrnew(sizeof(int), 0);
 
     int val3 = 3;
-    if (arrappend(arr, &val3)<0) {
+    if (arrappend(arr, &val3) < 0) {
         return -1;
     };
 
     int val4 = 4;
-    if (arrappend(arr, &val4)<0) {
+    if (arrappend(arr, &val4) < 0) {
         return -1;
     };
 
     int val5 = 5;
-    if (arrappend(arr, &val5)<0) {
+    if (arrappend(arr, &val5) < 0) {
         return -1;
     };
 

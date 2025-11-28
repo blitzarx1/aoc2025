@@ -18,7 +18,7 @@
 #define MAP_CAP_MULT 2
 
 typedef struct {
-    char *key;
+    const char *key;
     void *val;
 } HashMapBucketEntry;
 
@@ -34,16 +34,18 @@ typedef struct {
      *
      * Note: Buckets are scattered among capped memory
      */
-    size_t len; 
+    size_t len;
 } HashMap;
 
 HashMap *mapnew(size_t cap);
-int     mapset(HashMap *map, char *key, void *val);
-void    *mapget(HashMap *map, char *key);
+// Set key to val; both key and val are pointers
+int     mapset(HashMap *map, const char *key, void *val);
+void *mapget(HashMap *map, const char *key);
 void    mapfree(HashMap *map);
 
-// helper macros for typed access
+// Helper macro for typed access returning pointer to value
 #define MAP_GET(type, map, key)     ((type *)(mapget((map), (key))))
+// Helper macro for typed access returning value
 #define MAP_GET_VAL(type, map, key) (*(type *)(mapget((map), (key))))
 
 #ifdef HASHMAP_IMPLEMENTATION
@@ -70,7 +72,7 @@ static int mapbuckalloc(HashMap *map, size_t cap) {
     }
 
     map->buckets = buckets;
-    map->cap     = cap;
+    map->cap = cap;
     return 0;
 }
 
@@ -88,12 +90,12 @@ HashMap *mapnew(size_t cap) {
     return map;
 }
 
-void *mapget(HashMap *map, char *key) {
+void *mapget(HashMap *map, const char *key) {
     LOG_DEBUG("getting value for key: %s", key);
 
     if (!map || !key) {
         LOG_ERROR("invalid args (map=%p key=%p)",
-                  (void*)map, (void*)key);
+            (void *)map, (void *)key);
         return NULL;
     }
 
@@ -135,7 +137,7 @@ void *mapget(HashMap *map, char *key) {
     return NULL;
 }
 
-static int insert_val(HashMap *map, char *key, void *val) {
+static int insert_val(HashMap *map, const char *key, void *val) {
     uint32_t hash = hash_str_fnv1a(key);
     LOG_DEBUG("got hash: %u", hash);
 
@@ -178,7 +180,7 @@ static int insert_val(HashMap *map, char *key, void *val) {
 
     // append new entry
     LOG_DEBUG("collision; appending new entry to bucket %d", idx);
-    HashMapBucketEntry entry = (HashMapBucketEntry){ key, val };
+    HashMapBucketEntry entry = { key, val };
     if (arrappend(b->entries, &entry) < 0) {
         LOG_ERROR("append to bucket entries");
         return -1;
@@ -234,13 +236,13 @@ static int mapresize(HashMap *map, size_t new_cap) {
     return 0;
 }
 
-int mapset(HashMap *map, char *key, void *val) {
+int mapset(HashMap *map, const char *key, void *val) {
     LOG_DEBUG("setting value for key: %s", key);
 
     float mapload = (float)map->len / (float)map->cap;
     if (mapload >= MAP_LOAD_THRESH) {
         LOG_DEBUG("map load factor %.2f exceeds threshold %.2f; resizing...",
-                  mapload, MAP_LOAD_THRESH);
+            mapload, MAP_LOAD_THRESH);
 
         size_t new_cap = map->cap * MAP_CAP_MULT;
         LOG_DEBUG("new capacity: %zu", new_cap);
@@ -254,10 +256,10 @@ int mapset(HashMap *map, char *key, void *val) {
     return insert_val(map, key, val);
 }
 
-void    mapfree(HashMap *map) {
+void mapfree(HashMap *map) {
     if (!map) return;
     LOG_DEBUG("freeing map len=%zu cap=%zu", map->len, map->cap);
-    
+
     for (size_t i = 0; i < map->cap; i++) {
         HashMapBucket *buckets = (HashMapBucket *)map->buckets;
         HashMapBucket *b = &buckets[i];

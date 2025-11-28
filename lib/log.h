@@ -31,30 +31,30 @@
 
 // DEBUG (4)
 #if LOG_LEVEL >= 4
-    #define LOG_DEBUG(fmt, ...)  PRINTF_GUARDED("DEBUG", fmt, ##__VA_ARGS__)
+#define LOG_DEBUG(fmt, ...)  PRINTF_GUARDED("DEBUG", fmt, ##__VA_ARGS__)
 #else
-    #define LOG_DEBUG(fmt, ...)  do { } while (0)
+#define LOG_DEBUG(fmt, ...)  do { } while (0)
 #endif
 
 // INFO (3)
 #if LOG_LEVEL >= 3
-    #define LOG_INFO(fmt, ...)   PRINTF_GUARDED("INFO", fmt, ##__VA_ARGS__)
+#define LOG_INFO(fmt, ...)   PRINTF_GUARDED("INFO", fmt, ##__VA_ARGS__)
 #else
-    #define LOG_INFO(fmt, ...)   do { } while (0)
+#define LOG_INFO(fmt, ...)   do { } while (0)
 #endif
 
 // WARN (2)
 #if LOG_LEVEL >= 2
-    #define LOG_WARN(fmt, ...)   PRINTF_GUARDED("WARN", fmt, ##__VA_ARGS__)
+#define LOG_WARN(fmt, ...)   PRINTF_GUARDED("WARN", fmt, ##__VA_ARGS__)
 #else
-    #define LOG_WARN(fmt, ...)   do { } while (0)
+#define LOG_WARN(fmt, ...)   do { } while (0)
 #endif
 
 // ERROR (1)
 #if LOG_LEVEL >= 1
-    #define LOG_ERROR(fmt, ...)  PRINTF_GUARDED("ERROR", fmt, ##__VA_ARGS__)
+#define LOG_ERROR(fmt, ...)  PRINTF_GUARDED("ERROR", fmt, ##__VA_ARGS__)
 #else
-    #define LOG_ERROR(fmt, ...)  do { } while (0)
+#define LOG_ERROR(fmt, ...)  do { } while (0)
 #endif
 
 #endif // LOG_H
