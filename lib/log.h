@@ -19,13 +19,15 @@
 #define LOG_NAME "LOG"
 #endif
 
+const static int MAX_LOG_LEVEL_STR_LEN = 6;
+
 // Base guarded printf: all levels go through this.
 // We always compile this, the guarding happens in LOG_* macros.
 #define PRINTF_GUARDED(level_str, fmt, ...)                                       \
     fprintf(                                                                      \
         stderr,                                                                   \
-         level_str ":" LOG_NAME ":%s:%s:%d: " fmt "\n",                           \
-        __func__, __FILE__, __LINE__, ##__VA_ARGS__)
+         "%*s" ":" LOG_NAME ":%s:%s:%d: " fmt "\n",                               \
+        MAX_LOG_LEVEL_STR_LEN, level_str, __func__, __FILE__, __LINE__, ##__VA_ARGS__)
 
 // ----- Per-level macros, guarded by LOG_LEVEL -----
 
