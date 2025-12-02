@@ -19,7 +19,7 @@ const static int MAX_STEPS = 100;
 const static int START_POS = 50;
 const static int MAX_STEPS_DIGITS = 5;
 
-Input *parse_input(const char *line) {
+static Input *parse_input(const char *line) {
     char dir = line[0];
     if (dir != 'L' && dir != 'R') {
         LOG_ERROR("Invalid direction character: %c", dir);
@@ -48,7 +48,7 @@ void click(State *state) {
     state->zeroed++;
 }
 
-int compute_rotation(const Input *input, State *state) {
+static int compute_rotation(const Input *input, State *state) {
     int steps = input->steps;
 
     int to_zero;

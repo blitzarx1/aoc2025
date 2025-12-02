@@ -9,12 +9,12 @@
 #define LOG_NAME "main"
 #include "log.h"
 
-const static char *INPUT_TEST_FILENAME = "./day1/input.txt";
+const static char *INPUT_FILENAME = "./day1/input.txt";
 
 int main() {
     State ctx = {START_POS, 0};
 
-    int rc = file_process_lines(INPUT_TEST_FILENAME, input_line_handler, &ctx);
+    int rc = file_process_lines(INPUT_FILENAME, input_line_handler, &ctx);
     if (rc < 0) {
         LOG_ERROR("file_process_lines failed");
         return -1;

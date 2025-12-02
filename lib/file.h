@@ -22,10 +22,22 @@ typedef int (*file_line_handler)(const char *line, void *ctx);
 // - -1 if the file could not be opened or memory allocation failed.
 int file_process_lines(const char *filename, file_line_handler fn, void *ctx);
 
+// Returns the size of the file in bytes, or -1 on error.
+long get_file_size(const char *filename);
+
 #ifdef FILELIB_IMPLEMENTATION
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/stat.h>
+
+long get_file_size(const char *filename)
+{
+    struct stat st;
+    if (stat(filename, &st) == 0)
+        return st.st_size;
+    return -1;
+}
 
 // Reads one logical line into a reusable buffer (grows as needed).
 // Strips trailing '\n' and optional '\r'. 
