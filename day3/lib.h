@@ -7,8 +7,11 @@
 #define FILELIB_IMPLEMENTATION
 #include<file.h>
 
+#include<string.h>
+
 typedef struct {
     long long sum;
+    int num_size;
 } Ctx;
 
 char *get2max_char(const char *s, int n) {
@@ -16,60 +19,39 @@ char *get2max_char(const char *s, int n) {
         return NULL;
     }
 
+    int len = strlen(s);
+    if (len == 0) {
+        LOG_ERROR("Empty string passed");
+        return NULL;
+    }
+
+    int rb = len - n;
+    if (rb < 0) {
+        LOG_ERROR("String too short for %d max chars: %s", n, s);
+        return NULL;
+    }
+    int lb=0;
+
     char *buf = malloc(sizeof(char) * n);
 
-    // TODO: generalize for n
-    char max1 = 0;
-    char max2 = 0;
+    for (int i = 0; i < n; i++) {
+        buf[i] = 0;
 
-    int i = 0;
-    int len = 1;
-    int max1_idx = -1;
-    int max2_idx = -1;
-    for (;;) {
-        char c = s[i];
-        if (c == '\0') break;
-
-        if (c > max1) {
-            if (max1>max2) {
-                max2 = max1;
-                max2_idx = max1_idx;
-            }
-
-            max1 = c;
-            max1_idx = i;
-        } else {
-            if ( c != max1 && c > max2 ) {
-                max2 = c;
-                max2_idx = i;
+        char max = 0;
+        LOG_DEBUG("Finding max char for position %d between %d and %d", i, lb, rb);
+        for (int j = lb; j <= rb; j++) {
+            LOG_DEBUG("\tComparing char %c at pos %d with current max %c", s[j], j, max);
+            if (s[j] > max) {
+                max = s[j];
+                lb = j + 1;
             }
         }
 
-        i++;
-        len++;
+        rb++;
+
+        LOG_INFO("Selected max char %c for position %d", max, i);
+        buf[i] = max;
     }
-
-    len--;
-
-    LOG_DEBUG("Max1: %c at %d, Max2: %c at %d, len %d", max1, max1_idx, max2, max2_idx, len);
-
-    if (max1_idx == len - 1) {
-        max1 = max2;
-        max1_idx = max2_idx;
-    }
-
-    i = max1_idx + 1;
-    max2= s[i];
-    for (int j = i; j < len; j++) {
-        if (s[j] > max2) {
-            max2 = s[j];
-        }
-    }
-
-    buf[0] = max1;
-    buf[1] = max2;
-
-    // TODO: end ----
 
     return buf;
 }
@@ -87,7 +69,7 @@ int process_line(const char *line, void *ctx) {
     Ctx *c = (Ctx *)ctx;
 
     char *maxchars;
-    if ((maxchars = get2max_char(line, 2)) == NULL) {
+    if ((maxchars = get2max_char(line, c->num_size)) == NULL) {
         LOG_ERROR("get2max_char failed");
         return -1;
     }

@@ -10,8 +10,10 @@
 
 const static char *INPUT_FILENAME = "./day3/input.txt";
 
+const static int NUM_SIZE = 12;
+
 int main() {
-    Ctx ctx = {0};
+    Ctx ctx = {0, NUM_SIZE};
 
     if (file_process_lines(INPUT_FILENAME, process_line, &ctx) !=0) {
         LOG_ERROR("file_process_lines failed");
