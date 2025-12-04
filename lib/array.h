@@ -1,3 +1,6 @@
+#include <stdlib.h>
+#include <string.h>
+
 #ifndef ARRAY_H
 #define ARRAY_H
 
@@ -6,9 +9,6 @@
 #endif
 #define LOG_NAME "array"
 #include "log.h"
-
-#include <stdlib.h>
-#include <string.h>
 
 #define ARR_DEFAULT_CAP 2
 #define ARR_CAP_MULT 2
@@ -22,6 +22,7 @@ typedef struct {
 
 Array *arrnew(size_t valsize, size_t cap);
 int arrappend(Array *arr, const void *val);
+int arrset(Array *arr, size_t idx, const void *val);
 size_t arrlen(const Array *arr);
 void *arrget(const Array *arr, size_t idx);
 void arrfree(Array *arr);
@@ -45,6 +46,23 @@ static int arralloc(Array *arr, size_t cap) {
 
     arr->vals = vals;
     arr->cap = cap;
+    return 0;
+}
+
+int arrset(Array *arr, size_t idx, const void *val) {
+    if (!arr || !val || arr->valsize == 0) {
+        LOG_ERROR("invalid args (arr=%p val=%p valsize=%zu)",
+            (void *)arr, val, arr ? arr->valsize : 0);
+        return -1;
+    }
+    if (idx >= arr->len) {
+        LOG_ERROR("index out of bounds (idx=%zu len=%zu)", idx, arr->len);
+        return -1;
+    }
+
+    unsigned char *base = (unsigned char *)arr->vals;
+    memcpy(base + idx * arr->valsize, val, arr->valsize);
+
     return 0;
 }
 
@@ -109,11 +127,9 @@ size_t arrlen(const Array *arr) {
 
 void *arrget(const Array *arr, size_t idx) {
     if (!arr) {
-        LOG_ERROR("called with NULL arr");
         return NULL;
     }
     if (idx >= arr->len) {
-        LOG_ERROR("index %zu out of bounds (len %zu)", idx, arr->len);
         return NULL;
     }
 
