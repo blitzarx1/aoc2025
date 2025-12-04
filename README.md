@@ -35,7 +35,7 @@ make clean
 
 Removes the bin/ directory and all compiled executables.
 
-Notes
+### Notes
 
 - Each day is independent and contains its own entry point.
 - Common helper functions should be placed in the lib/ directory.
