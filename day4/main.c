@@ -17,7 +17,7 @@ int main() {
     Ctx ctx = {arrnew(sizeof(Array *), 100)};
 
     if (file_process_lines(INPUT_FILENAME, accumulate_map, &ctx) !=0) {
-        LOG_ERROR("file_process_lines failed");
+        LOG_ERROR("accumulate_map failed");
         return -1;
     };
 

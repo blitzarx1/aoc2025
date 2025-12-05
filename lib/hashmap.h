@@ -1,6 +1,10 @@
 #ifndef HASHMAP_H
 #define HASHMAP_H
 
+#include <stdint.h>
+#include <stddef.h>
+#include <stdbool.h>
+
 #define ARRAY_IMPLEMENTATION
 #include "array.h"
 
@@ -9,9 +13,6 @@
 #endif
 #define LOG_NAME "hashmap"
 #include "log.h"
-
-#include <stdint.h>
-#include <stddef.h>
 
 #define MAP_DEFAULT_CAP 64
 #define MAP_LOAD_THRESH 0.5
@@ -39,9 +40,9 @@ typedef struct {
 
 HashMap *mapnew(size_t cap);
 // Set key to val; both key and val are pointers
-int     mapset(HashMap *map, const char *key, void *val);
+int  mapset(HashMap *map, const char *key, void *val);
 void *mapget(HashMap *map, const char *key);
-void    mapfree(HashMap *map);
+void mapfree(HashMap *map);
 
 // Helper macro for typed access returning pointer to value
 #define MAP_GET(type, map, key)     ((type *)(mapget((map), (key))))
@@ -126,6 +127,7 @@ void *mapget(HashMap *map, const char *key) {
     LOG_DEBUG("bucket at idx %d has %zu entries", idx, arrlen(b->entries));
     for (size_t i = 0; i < arrlen(b->entries); i++) {
         HashMapBucketEntry *entry = (HashMapBucketEntry *)arrget(b->entries, i);
+        LOG_DEBUG("comparing key %s with entry key %s", key, entry->key);
         if (strcmp(entry->key, key) == 0) {
             LOG_DEBUG("found matching key at entry %zu", i);
             return entry->val;
@@ -150,15 +152,21 @@ static int insert_val(HashMap *map, const char *key, void *val) {
     if (!b->entries) {
         LOG_DEBUG("bucket at idx %d is empty; initializing new bucket", idx);
 
-        HashMapBucketEntry entry = (HashMapBucketEntry){ key, val };
-        Array *entries = arrnew(sizeof(HashMapBucketEntry), 0);
+        char *key_copy = strdup(key);
+        if (!key_copy) {
+            LOG_ERROR("strdup failed");
+            return -1;
+        }
+
+        HashMapBucketEntry entry = (HashMapBucketEntry){ key_copy, val };
+        Array *entries = arrnew(sizeof(HashMapBucketEntry), 2);
         if (arrappend(entries, &entry) < 0) {
             LOG_ERROR("append to bucket entries");
             return -1;
         }
 
-        b->entries = entries;   // <-- just assign, no memcpy
-        map->len++;             // new occupied bucket
+        b->entries = entries;
+        map->len++;
 
         LOG_DEBUG("bucket at idx %d is successfully filled", idx);
         return 0;
