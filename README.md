@@ -7,11 +7,12 @@ This repository contains my solutions for Advent of Code 2025, implemented in C.
 ### Build a specific day:
 
 ```bash
-make build day=2 log_level=4
+make build day=2 log_level=4 part=2
 ```
 
 - day — folder number (day2, day3, ...)
 - log_level — value passed as -DLOG_LEVEL=<n> to control logging
+- part - which part of the task to compile (AoC usually have 2 parts per day)
 
 The executable will appear under:
 
